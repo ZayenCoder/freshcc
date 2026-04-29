@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Info Extractor - Clean & Extract Card Data</title>
+    <title>FreshCC - Card Info Extractor | Clean & Extract Card Data by ZayenCoder</title>
+    <meta name="description" content="Professional card information extraction tool by ZayenCoder. Extract PAN|MM|YYYY|CVV from raw data instantly.">
+    <meta name="author" content="ZayenCoder">
+    <meta name="copyright" content="© 2026 ZayenCoder. All Rights Reserved.">
+    
     <style>
         * {
             margin: 0;
@@ -44,16 +48,36 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 2.2em;
             margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            font-size: 0.6em;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
         }
 
         .header p {
             opacity: 0.9;
             font-size: 1.1em;
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-family: monospace;
         }
 
         .content {
@@ -194,11 +218,33 @@
         }
 
         .footer {
-            background: #f8f9fa;
-            padding: 20px;
+            background: #1a1a2e;
+            color: #aaa;
+            padding: 25px;
             text-align: center;
-            color: #666;
             font-size: 14px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .copyright {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .copyright a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .copyright a:hover {
+            text-decoration: underline;
         }
 
         .alert {
@@ -246,20 +292,27 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            
+            .badge {
+                position: static;
+                display: inline-block;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔐 Card Info Extractor</h1>
+            <div class="badge">v1.0 | @ZayenCoder</div>
+            <h1>🔐 FreshCC <span>Card Info Extractor</span></h1>
             <p>Clean & Extract Card Data - Remove unwanted text, keep only PAN|MM|YYYY|CVV</p>
         </div>
 
         <div class="content">
             <div class="section">
                 <div class="section-title">📥 Input Data</div>
-                <textarea id="inputData" placeholder="পেস্ট করুন আপনার ডাটা এখানে...&#10;&#10;উদাহরণ:&#10;Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server&#10;Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server"></textarea>
+                <textarea id="inputData" placeholder="পেস্ট করুন আপনার ডাটা এখানে...&#10;&#10;উদাহরণ:&#10;Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server"></textarea>
                 <div class="button-group">
                     <button class="btn-primary" onclick="extractData()">✨ Extract Card Info</button>
                     <button class="btn-secondary" onclick="loadSample()">📝 Load Sample</button>
@@ -269,7 +322,7 @@
 
             <div class="section">
                 <div class="section-title">📤 Output (Clean Card Data)</div>
-                <div class="output-box" id="output">等待输入...</div>
+                <div class="output-box" id="output">Waiting for input...</div>
                 <div class="button-group">
                     <button class="btn-success" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
                     <button class="btn-secondary" onclick="downloadOutput()">💾 Download as TXT</button>
@@ -293,8 +346,13 @@
         </div>
 
         <div class="footer">
-            <p>⚡ Extracts: 16-digit PAN | Month | Year | CVV | Removes all extra text</p>
-            <p>🔒 Data stays in your browser - No server upload</p>
+            <div class="footer-content">
+                <p>⚡ Extracts: 16-digit PAN | Month | Year | CVV | Removes all extra text</p>
+                <p>🔒 Data stays in your browser - No server upload</p>
+                <div class="copyright">
+                    © 2026 <strong>ZayenCoder</strong> | All Rights Reserved | Developed with ❤️ for FreshCC
+                </div>
+            </div>
         </div>
     </div>
 
@@ -359,10 +417,7 @@
         function loadSample() {
             const sample = `Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server
 Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022178428|02|2028|877| [Charge :$4,6] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022568438|02|2028|556| [Charge :$2,0] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022337289|02|2028|804| [Charge :$5,1] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022348203|02|2028|657| [Charge :$0,3] [BIN: - - - ] [GATE:01] ./Altenen Server`;
+Live | 5154620022178428|02|2028|877| [Charge :$4,6] [BIN: - - - ] [GATE:01] ./Altenen Server`;
             
             document.getElementById('inputData').value = sample;
             showAlert('Sample data loaded! Click "Extract" to process.', 'success');
@@ -370,14 +425,14 @@ Live | 5154620022348203|02|2028|657| [Charge :$0,3] [BIN: - - - ] [GATE:01] ./Al
         
         function clearAll() {
             document.getElementById('inputData').value = '';
-            document.getElementById('output').textContent = '等待输入...';
+            document.getElementById('output').textContent = 'Waiting for input...';
             document.getElementById('stats').style.display = 'none';
             showAlert('All cleared!', 'success');
         }
         
         function copyToClipboard() {
             const output = document.getElementById('output').textContent;
-            if (output && output !== '等待输入...' && !output.includes('No valid')) {
+            if (output && output !== 'Waiting for input...' && !output.includes('No valid')) {
                 navigator.clipboard.writeText(output).then(() => {
                     showAlert('✓ Copied to clipboard!', 'success');
                 }).catch(() => {
@@ -390,12 +445,12 @@ Live | 5154620022348203|02|2028|657| [Charge :$0,3] [BIN: - - - ] [GATE:01] ./Al
         
         function downloadOutput() {
             const output = document.getElementById('output').textContent;
-            if (output && output !== '等待输入...' && !output.includes('No valid')) {
+            if (output && output !== 'Waiting for input...' && !output.includes('No valid')) {
                 const blob = new Blob([output], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `extracted_cards_${new Date().getTime()}.txt`;
+                a.download = `freshcc_extracted_${new Date().getTime()}.txt`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
