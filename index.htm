@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Info Extractor - Clean & Extract Card Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .output-box {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 250px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .stats {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .alert.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .button-group button {
+                flex: 1;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Card Info Extractor</h1>
+            <p>Clean & Extract Card Data - Remove unwanted text, keep only PAN|MM|YYYY|CVV</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-title">📥 Input Data</div>
+                <textarea id="inputData" placeholder="পেস্ট করুন আপনার ডাটা এখানে...&#10;&#10;উদাহরণ:&#10;Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server&#10;Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server"></textarea>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="extractData()">✨ Extract Card Info</button>
+                    <button class="btn-secondary" onclick="loadSample()">📝 Load Sample</button>
+                    <button class="btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📤 Output (Clean Card Data)</div>
+                <div class="output-box" id="output">等待输入...</div>
+                <div class="button-group">
+                    <button class="btn-success" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+                    <button class="btn-secondary" onclick="downloadOutput()">💾 Download as TXT</button>
+                </div>
+            </div>
+
+            <div class="stats" id="stats" style="display: none;">
+                <div class="stat-item">
+                    <span class="stat-label">Total Cards Found:</span>
+                    <span class="stat-value" id="totalCards">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Valid Format:</span>
+                    <span class="stat-value" id="validFormat">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lines Processed:</span>
+                    <span class="stat-value" id="linesProcessed">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>⚡ Extracts: 16-digit PAN | Month | Year | CVV | Removes all extra text</p>
+            <p>🔒 Data stays in your browser - No server upload</p>
+        </div>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <script>
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        function extractCardInfo(text) {
+            const lines = text.trim().split('\n');
+            const results = [];
+            const regex = /(\d{16})\|(\d{2})\|(\d{4})\|(\d{3,4})/;
+            
+            for (const line of lines) {
+                const match = line.match(regex);
+                if (match) {
+                    const cardInfo = `${match[1]}|${match[2]}|${match[3]}|${match[4]}`;
+                    results.push(cardInfo);
+                }
+            }
+            
+            return {
+                data: results.join('\n'),
+                total: results.length,
+                linesProcessed: lines.length
+            };
+        }
+        
+        function extractData() {
+            const inputText = document.getElementById('inputData').value;
+            
+            if (!inputText.trim()) {
+                showAlert('Please enter some data first!', 'error');
+                return;
+            }
+            
+            const result = extractCardInfo(inputText);
+            
+            if (result.data) {
+                document.getElementById('output').textContent = result.data;
+                document.getElementById('totalCards').textContent = result.total;
+                document.getElementById('linesProcessed').textContent = result.linesProcessed;
+                document.getElementById('validFormat').textContent = result.total;
+                document.getElementById('stats').style.display = 'flex';
+                showAlert(`✓ Extracted ${result.total} card entries successfully!`, 'success');
+            } else {
+                document.getElementById('output').textContent = '❌ No valid card information found!\n\nMake sure your data contains:\n16-digit card number|MM|YYYY|CVV';
+                document.getElementById('stats').style.display = 'none';
+                showAlert('No valid card data found!', 'error');
+            }
+        }
+        
+        function loadSample() {
+            const sample = `Live | 5154620022516551|02|2028|437| [Charge :$2,5] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022755043|02|2028|622| [Charge :$8,2] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022178428|02|2028|877| [Charge :$4,6] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022568438|02|2028|556| [Charge :$2,0] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022337289|02|2028|804| [Charge :$5,1] [BIN: - - - ] [GATE:01] ./Altenen Server
+Live | 5154620022348203|02|2028|657| [Charge :$0,3] [BIN: - - - ] [GATE:01] ./Altenen Server`;
+            
+            document.getElementById('inputData').value = sample;
+            showAlert('Sample data loaded! Click "Extract" to process.', 'success');
+        }
+        
+        function clearAll() {
+            document.getElementById('inputData').value = '';
+            document.getElementById('output').textContent = '等待输入...';
+            document.getElementById('stats').style.display = 'none';
+            showAlert('All cleared!', 'success');
+        }
+        
+        function copyToClipboard() {
+            const output = document.getElementById('output').textContent;
+            if (output && output !== '等待输入...' && !output.includes('No valid')) {
+                navigator.clipboard.writeText(output).then(() => {
+                    showAlert('✓ Copied to clipboard!', 'success');
+                }).catch(() => {
+                    showAlert('Failed to copy', 'error');
+                });
+            } else {
+                showAlert('Nothing to copy! Extract data first.', 'error');
+            }
+        }
+        
+        function downloadOutput() {
+            const output = document.getElementById('output').textContent;
+            if (output && output !== '等待输入...' && !output.includes('No valid')) {
+                const blob = new Blob([output], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `extracted_cards_${new Date().getTime()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showAlert('✓ File downloaded!', 'success');
+            } else {
+                showAlert('Nothing to download! Extract data first.', 'error');
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                extractData();
+            }
+        });
+    </script>
+</body>
+</html>
